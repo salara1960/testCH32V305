@@ -16,8 +16,8 @@
 //const char *ver = "ver.1.5 11.06.26";
 //const char *ver = "ver.1.6 12.06.26";
 //const char *ver = "ver.1.7 14.06.26";
-const char *ver = "ver.1.8 15.06.26";
-
+//const char *ver = "ver.1.8 15.06.26";
+const char *ver = "ver.1.9 15.06.26";
 
 
 const char *eol = "\n";
@@ -27,7 +27,7 @@ volatile uint8_t again_flag = 0;
 s_recq_t que;
 bool queFlag = false;
 evt_t evt = noneEvt;
-volatile uint32_t epoch = 1781515199;
+volatile uint32_t epoch = 1781546399;//1781515199;
 //1781452255;//1781252806;//1781168930;//1780325733;//1780227269;//1780147283; 
 //1779952999;//1779740360;// 1779618399;//1779540639;//1778309280;//1767443364;
 uint32_t TZ = 2 * 60 * 60;

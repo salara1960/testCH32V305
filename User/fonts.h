@@ -1,13 +1,13 @@
 #ifndef __FONTS_H__
 #define __FONTS_H__
 
-#pragma pack(push,1)
+//#pragma pack(push,1)
 typedef struct FontDef {
     const unsigned char width;
     unsigned char height;
     const unsigned short *data;
 } FontDef;
-#pragma pack(pop)
+//#pragma pack(pop)
 
 //Font lib.
 extern const FontDef Font_8x8;
