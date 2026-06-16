@@ -17,7 +17,8 @@
 //const char *ver = "ver.1.6 12.06.26";
 //const char *ver = "ver.1.7 14.06.26";
 //const char *ver = "ver.1.8 15.06.26";
-const char *ver = "ver.1.9 15.06.26";
+//const char *ver = "ver.1.9 15.06.26";
+const char *ver = "ver.2.0 16.06.26";
 
 
 const char *eol = "\n";
@@ -27,7 +28,7 @@ volatile uint8_t again_flag = 0;
 s_recq_t que;
 bool queFlag = false;
 evt_t evt = noneEvt;
-volatile uint32_t epoch = 1781546399;//1781515199;
+volatile uint32_t epoch = 1781602230;//1781546399;//1781515199;
 //1781452255;//1781252806;//1781168930;//1780325733;//1780227269;//1780147283; 
 //1779952999;//1779740360;// 1779618399;//1779540639;//1778309280;//1767443364;
 uint32_t TZ = 2 * 60 * 60;
@@ -439,6 +440,8 @@ void help()
 	printf("USART1 (debug):\n\tTX - PA9\n\tRX - PA10\n"
 		   "SPI2 (ST7789):\n\tSCLK - PB13\n\tMOSI - PB15\n\tRES - PB11\n\tDC - PB10\n\tCS - PB12\n\tBLK - PB9\n"
 		   "SPI1 (FM25V40):\n\tNSS - PA4\n\tSCLK - PA5\n\tMISO - PA6\n\tMOSI - PA7\n"
+           "I2C1 (BMx280):\n\tSCL - PB8\n\tSDA - PB9\n"
+           "UART4 (JDY-23):\n\tTX - PC10\n\tRX - PC11\n"
 		   "WCH-LinkE:\n\tSWDIO - PA13\n\tSWCLK - PA14\n"
 		   "VCC:\n\tADC15 - PC5\n");
 }

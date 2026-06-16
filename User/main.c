@@ -134,6 +134,11 @@ printf("\r\n");
 	//
 #endif
 
+#ifdef SET_AIR_MODULE
+	UART4_Cfg(115200);
+	uint32_t air_rst = getMS(2000);
+#endif
+
 	result_t lsens = {0.0, 0.0, 0.0};
 	uint8_t reboot_flag = 0;
 	bool first = true;
@@ -150,7 +155,13 @@ printf("\r\n");
 				if (evt_sens != noneEvt) putEvt(evt_sens, &que);
 			}
 		}
-		
+
+		if (air_rst) {
+			if (checkMS(air_rst)) {
+				air_rst = 0;
+				airWrite(iRST, NULL, true);
+			}
+		}
 
 		evt = getEvt(&que);
 		switch (evt) {
@@ -207,8 +218,7 @@ printf("\r\n");
 					}
 				} else if (strstr((char *)getBuffer,"pic")) {
 					putEvt(picEvt, &que);
-				}
-				else if (strstr((char *)getBuffer,"crc")) {
+				} else if (strstr((char *)getBuffer,"crc")) {
 					if ((uk = strchr((char *)getBuffer, '='))) {
 						uk++;
 						fm_adr = atol(uk);
@@ -225,6 +235,13 @@ printf("\r\n");
 					putEvt(crcEvt, &que);
 				}
 #endif				
+#ifdef SET_AIR_MODULE
+				 else if ( ((uk = strstr((char *)getBuffer,"air="))) ||
+				 				((uk = strstr((char *)getBuffer,"AIR="))) ) {//air=AT\r\n
+				 	uk += 4;
+					putAirBuf(uk, strlen(uk));
+				 }
+#endif
 			break;
 			case wrtimeEvt:
 #ifdef SET_FMRAM

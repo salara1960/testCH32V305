@@ -1,4 +1,4 @@
-User/rtc.o: ../User/rtc.c ../User/rtc.h ../User/hdr.h \
+User/air.o: ../User/air.c ../User/air.h ../User/func.h ../User/hdr.h \
  /home/alarm/mounriver-studio-projects/testCH32V305/Debug/debug.h \
  /home/alarm/mounriver-studio-projects/testCH32V305/Peripheral/inc/ch32v30x.h \
  /home/alarm/mounriver-studio-projects/testCH32V305/Core/core_riscv.h \
@@ -28,9 +28,10 @@ User/rtc.o: ../User/rtc.c ../User/rtc.h ../User/hdr.h \
  /home/alarm/mounriver-studio-projects/testCH32V305/Peripheral/inc/ch32v30x_wwdg.h \
  /home/alarm/mounriver-studio-projects/testCH32V305/User/ch32v30x_it.h \
  /home/alarm/mounriver-studio-projects/testCH32V305/Peripheral/inc/ch32v30x_misc.h \
- ../User/func.h ../User/lcd.h ../User/fonts.h ../User/i2c.h \
- ../User/fmram.h ../User/air.h
-../User/rtc.h:
+ ../User/lcd.h ../User/fonts.h ../User/rtc.h ../User/i2c.h \
+ ../User/fmram.h
+../User/air.h:
+../User/func.h:
 ../User/hdr.h:
 /home/alarm/mounriver-studio-projects/testCH32V305/Debug/debug.h:
 /home/alarm/mounriver-studio-projects/testCH32V305/Peripheral/inc/ch32v30x.h:
@@ -61,9 +62,8 @@ User/rtc.o: ../User/rtc.c ../User/rtc.h ../User/hdr.h \
 /home/alarm/mounriver-studio-projects/testCH32V305/Peripheral/inc/ch32v30x_wwdg.h:
 /home/alarm/mounriver-studio-projects/testCH32V305/User/ch32v30x_it.h:
 /home/alarm/mounriver-studio-projects/testCH32V305/Peripheral/inc/ch32v30x_misc.h:
-../User/func.h:
 ../User/lcd.h:
 ../User/fonts.h:
+../User/rtc.h:
 ../User/i2c.h:
 ../User/fmram.h:
-../User/air.h:

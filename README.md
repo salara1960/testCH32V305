@@ -35,6 +35,7 @@ RISC-V CH32V305(WeAct nanoCH32V305 board) + st7789(spi) + fm25v40(spi) + bme280(
   - SPI2 : обслуживает дисплей IPS ST7789.
   - SPI1 : F-RAM чип FM25V40 (содержит стартовую картинку + служебные данные и epoch time для старта RTC).
   - I2C1 : датчик BME280 (температура, атмосферное давление и вляжность).
+  - UART4 : параметры порта 115200 8N1 - порт для обслуживания BLE модуля JDY-23.
 * Прием команд по последовательному порту (USART1) выполняется в обработчике прерывания.
 * Через USART1 можно отправлять команды на устройство, например :
 
@@ -62,6 +63,12 @@ SPI1 (FM25V40):
         SCLK - PA5
         MISO - PA6
         MOSI - PA7
+I2C1 (BMx280):
+        SCL - PB8
+        SDA - PB9
+UART4 (JDY-23):
+        TX - PC10
+        RX - PC11
 WCH-LinkE:
         SWDIO - PA13
         SWCLK - PA14
@@ -103,20 +110,25 @@ reboot
     рестарт устройства с записью текущего времени в F-RAM
 ```
 
+
 ```
 halt
     перевод устройства в режим standby с записью текущего времени в F-RAM
 ```
 
 
+```
+
+```
+
 * Устройство выдает в последовательный порт (USART1) каждые 10 секунд информацию такого вида :
 
 ```
-.
-.
-15.06 13:55:28 | ver.1.8 15.06.26, RISC-V CH32V305RBT6, SystemClk 144 MHz, LCD ST7789 (SPI2), FM25V40 (SPI1), BME280:[24.83"C | 746.76 mmHg | 88.48 %], Vcc 3299mv
-15.06 13:55:39 | ver.1.8 15.06.26, RISC-V CH32V305RBT6, SystemClk 144 MHz, LCD ST7789 (SPI2), FM25V40 (SPI1), BME280:[24.83"C | 746.86 mmHg | 88.48 %], Vcc 3299mv
-15.06 13:55:49 | ver.1.8 15.06.26, RISC-V CH32V305RBT6, SystemClk 144 MHz, LCD ST7789 (SPI2), FM25V40 (SPI1), BME280:[24.83"C | 746.88 mmHg | 88.48 %], Vcc 3299mv
+AIR=AT+RST
++OK
++Ready
+16.06 15:20:53 | ver.2.0 16.06.26, RISC-V CH32V305RBT6, SystemClk 144 MHz, LCD ST7789 (SPI2), FM25V40 (SPI1), BME280:[25.00"C | 753.13 mmHg | 88.50 %], Vcc 3299mv
+16.06 15:21:03 | ver.2.0 16.06.26, RISC-V CH32V305RBT6, SystemClk 144 MHz, LCD ST7789 (SPI2), FM25V40 (SPI1), BME280:[24.98"C | 753.19 mmHg | 88.49 %], Vcc 3298mv
 ```
 
 

@@ -49,6 +49,11 @@
 	#include "fmram.h"
 #endif
 
+#ifdef SET_AIR_MODULE
+	#include "air.h"
+#endif
+
+
 #define HTONS(x) ((uint16_t)((x >> 8) | ((x << 8) & 0xff00)))
 #define LOOP_FOREVER() while(1) { Delay_Ms(1); }
 

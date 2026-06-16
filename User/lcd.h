@@ -9,7 +9,7 @@
 //#define SPI_GPIO
 #define SPI_HW
 
-#define USE_HORIZONTAL 2//0
+#define USE_HORIZONTAL   2//0
 
 
 #define LCD_W 240
