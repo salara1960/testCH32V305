@@ -159,7 +159,15 @@ printf("\r\n");
 		if (air_rst) {
 			if (checkMS(air_rst)) {
 				air_rst = 0;
-				airWrite(iRST, NULL, true);
+				airCmd = iRST;
+				airWrite(airCmd, NULL, true);
+			}
+		}
+
+		if (tmr_pas && !yes_pas) {
+			if (checkMS(tmr_pas)) {
+				tmr_pas = 0;
+				airDisconnect();
 			}
 		}
 

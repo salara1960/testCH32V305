@@ -7,10 +7,16 @@
 char RxAirBuf[AIR_BUF_SIZE] = {0};
 volatile uint16_t RxAirCnt = 0;
 int8_t airCmd = iNone;
-int8_t air_ack_wait = 1;
-int8_t txDoneFlagAir = 0;
+int8_t airAck = -1;
+bool airConnect = false;
+uint32_t tmr_pas = 0;
+bool yes_pas = false;
+
+const char *airPassword = "salara";
 
 const char *at_cmd[MAX_AT_CMD] = {
+    "AT+HOSTEN\r\n",   // | +HOSTEN:<Param> , 0: transparent transmission from slave (APP, applet)
+                                            //3: Slave (iBeacon) mode
     "AT+VER\r\n",      // | +VER:JDY-23-V1.2
     "AT+BAUD0\r\n",    // | +OK ; //AT+BAUD<Param> Param:0！！115200,1！！57600,2！！38400,3！！19200,4！！9600,5！！4800,6！！2400,	Default: 4
     "AT+MAC\r\n",      // AT+MAC<Param> | +OK Param: (MAC address string)
@@ -34,6 +40,7 @@ const char *at_ack[MAX_AT_ACK] = {
     "+VER:",  // +VER:JDY-23-V1.2
     "+CONNECTED",
     "+DISCONNECT",
+    "+HOSTEN:",   // +HOSTEN:<Param>
     "+MTU:",      // +MTU:<Param>
     "+ALED:",     // +ALED:<Param>
     "+IBUUID:",   // +IBUUID:<Param>
@@ -45,7 +52,8 @@ const char *at_ack[MAX_AT_ACK] = {
     "+STAT:"      // +STAT:<Param> :  00: indicates not connected , 01: indicates connected
 };
 
-
+void airAckParse(char *uk);
+void airDisconnect();
 void UART4_IRQHandler (void) __attribute__ ((interrupt ("WCH-Interrupt-fast")));
 
 void UART4_Cfg (uint32_t spd) {
@@ -92,14 +100,13 @@ void UART4_IRQHandler (void) {
         if (RxAirCnt == AIR_BUF_SIZE)
             RxAirCnt = 0;
         if (byte == 0x0a) {
-            if (strlen ((char *)RxAirBuf))
-                printf ("%s", RxAirBuf);
+            if (strlen ((char *)RxAirBuf)) printf ("%s", RxAirBuf);
+            airAckParse(RxAirBuf);
             memset (RxAirBuf, 0, AIR_BUF_SIZE);
             RxAirCnt = 0;
         }
     }
 }
-
 //
 void putAirBuf (char *buf, int len) {
     char *ukz = NULL;
@@ -115,7 +122,7 @@ void putAirBuf (char *buf, int len) {
     }
 }
 //
-void airWrite (int8_t cd, char *str, bool prn)
+void airWrite(int8_t cd, char *str, bool prn)
 {
     if (!str) {
         if ((cd <= iNone) || (cd >= iLast)) return;
@@ -123,8 +130,8 @@ void airWrite (int8_t cd, char *str, bool prn)
 
     char *uks = at_cmd[cd];
     int len = strlen (at_cmd[cd]);
-    air_ack_wait = 1;
-    txDoneFlagAir = 0;
+    //air_ack_wait = 1;
+    //txDoneFlagAir = 0;
     if (str) {
         uks = str;
         char *ukz = NULL;
@@ -140,5 +147,34 @@ void airWrite (int8_t cd, char *str, bool prn)
         USART_SendData (UART4, *uks++);
     }
 }
+//-----------------------------------------------------------------------------------------
+void airAckParse(char *uk)
+{
+	if (strstr(uk, at_ack[ackCON])) {
+		airAck = ackCON;
+        airConnect = true;
+        tmr_pas = getMS(5000);
+	} else if (strstr(uk, at_ack[ackDISC])) {
+		airAck = ackDISC;
+        airConnect = false;
+        tmr_pas = 0;
+        yes_pas = false;
+	} else if (strstr(uk, airPassword)) {
+        if (airConnect) {
+            tmr_pas = 0;
+            yes_pas = true;
+        }
+    } else airAck = -1;
+}
+//-----------------------------------------------------------------------------------------
+void airDisconnect()
+{
+	if (airConnect) {
+		airCmd = iDISC;
+		airWrite(airCmd, NULL, true);
+	}
+}
+//-----------------------------------------------------------------------------------------
+
 
 #endif
