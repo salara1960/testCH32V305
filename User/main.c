@@ -44,6 +44,10 @@ int main(void)
 	TIM1_Init();
 	GPIOx_init();
 
+	#ifdef SET_BLE_STAT_PIN
+		EXTI4_INT_INIT();
+	#endif
+
 	queFlag = initEvt(&que);
 	
 	USART_Printf_Init(115200);	
@@ -149,6 +153,7 @@ printf("\r\n");
 
 		if (reboot_flag) break;
 
+
 		if (tmr_sens) {
 			if (checkMS(tmr_sens)) {
 				tmr_sens = 0;
@@ -174,7 +179,7 @@ printf("\r\n");
 		evt = getEvt(&que);
 		switch (evt) {
 			case prnEvt:
-				printf("%s", getBuffer);
+				//printf("%s", getBuffer);
 				if (strstr((char *)getBuffer,"halt")) {
 					reboot_flag = 2;
 				} else if (strstr((char *)getBuffer,"reboot")) {
@@ -244,12 +249,15 @@ printf("\r\n");
 				}
 #endif				
 #ifdef SET_AIR_MODULE
-				 else if ( ((uk = strstr((char *)getBuffer,"air="))) ||
-				 				((uk = strstr((char *)getBuffer,"AIR="))) ) {//air=AT\r\n
-				 	uk += 4;
+				else if ((uk = strstr((char *)getBuffer,"air="))) {
+					uk += 4;
+					toUppers(uk);//(char *)(getBuffer + 4));
 					putAirBuf(uk, strlen(uk));
-				 }
+				} else if (strstr((char *)getBuffer,"stat")) {
+					printf("BLE status is '%s'\n", (ble_ack_con == 1) ? "connected" : "disconnected");
+				}
 #endif
+				printf("%s", getBuffer);
 			break;
 			case wrtimeEvt:
 #ifdef SET_FMRAM
@@ -406,8 +414,38 @@ printf("\r\n");
 				}
 #endif
 			break;
+			case bleEvt:
+			{
+				switch (ble_ack_con) {
+					case 0: //disconnect
+						airAck = ackDISC;
+        				airConnect = false;
+        				tmr_pas = 0;
+        				yes_pas = false;
+					break;
+					case 1: //connect
+						airAck = ackCON;
+        				airConnect = true;
+        				tmr_pas = getMS(5000);
+					break;
+						default : airAck = bleNone;
+				}
+				if (ble_ack_con != bleNone) {
+					#ifndef SET_JDY23
+						printf("%s\n", at_ack[airAck]);
+					#endif
+				}
+			}
+			break;
 		}//switch(evt)
 		
+		if (tmr_enIrg) {
+			if (checkMS(tmr_enIrg)) {
+				tmr_enIrg = 0;
+				en_irg = true;
+			}
+		}
+
 #ifdef SET_ADC
 		if (start_adc) {
 			if (checkMS(start_adc)) {
@@ -420,6 +458,8 @@ printf("\r\n");
 		Delay_MS(1);
 		//
 	}
+
+	en_irg = false;
 
 	epoch = RTC_GetCounter() - TZ;
 	if (fm_adr_time > 0) { 

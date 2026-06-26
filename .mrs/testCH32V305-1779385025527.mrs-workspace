@@ -1,11 +1,12 @@
 {
 	"folders": [
 		{
+			"name": ".mrs",
 			"path": "."
 		},
 		{
-			"name": "testCH32V305",
-			"path": "/home/alarm/mounriver-studio-projects/testCH32V305"
+			"name": "examp_CH573",
+			"path": "../../../mrs_community-workspace/examp_CH573"
 		}
 	],
 	"settings": {

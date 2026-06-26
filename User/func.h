@@ -30,6 +30,16 @@ typedef struct s_recq_t {
 } s_recq_t;
 #pragma pack(pop)
 
+enum {
+	bleDis = 0,
+	bleCon = 1,
+	bleNone = 255
+};
+
+
+extern volatile bool en_irg;
+extern volatile uint8_t ble_ack_con;
+extern uint32_t tmr_enIrg;
 
 extern volatile uint8_t again_flag;
 extern s_recq_t que;
@@ -95,5 +105,8 @@ void prn_msg(u32 tm);
 uint32_t ks32(const uint32_t crc_origin, const uint8_t *buf, const uint32_t size);
 void prnBuffer(uint32_t adr, const uint8_t *buf, uint32_t len, const int lsize);
 const char *fmramName(uint16_t fid);
+void toUppers(char *st);
+void EXTI4_INT_INIT(void);
+
 
 #endif

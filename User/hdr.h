@@ -50,6 +50,8 @@
 #endif
 
 #ifdef SET_AIR_MODULE
+	#define SET_BLE_STAT_PIN
+	#define BLE_STAT_PIN GPIO_Pin_4
 	#include "air.h"
 #endif
 
@@ -74,6 +76,7 @@ enum {
 	crcEvt,
 	picEvt,
 	wrtimeEvt,
+	bleEvt,
 	errEvt,
 };
 

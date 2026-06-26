@@ -18,17 +18,22 @@
 //const char *ver = "ver.1.7 14.06.26";
 //const char *ver = "ver.1.8 15.06.26";
 //const char *ver = "ver.1.9 15.06.26";
-const char *ver = "ver.2.0 16.06.26";
+//const char *ver = "ver.2.0 16.06.26";
+const char *ver = "ver.2.1 26.06.26";
 
 
 const char *eol = "\n";
 
+
+bool volatile en_irg = false;
+uint8_t volatile ble_ack_con = bleNone;
+uint32_t tmr_enIrg = 0;
 u8 getBuffer[RX_SIZE];
 volatile uint8_t again_flag = 0;
 s_recq_t que;
 bool queFlag = false;
 evt_t evt = noneEvt;
-volatile uint32_t epoch = 1781602230;//1781546399;//1781515199;
+volatile uint32_t epoch = 1782484999;//1782480780;//1781602230;//1781546399;//1781515199;
 //1781452255;//1781252806;//1781168930;//1780325733;//1780227269;//1780147283; 
 //1779952999;//1779740360;// 1779618399;//1779540639;//1778309280;//1767443364;
 uint32_t TZ = 2 * 60 * 60;
@@ -260,13 +265,20 @@ void Delay_MS (uint32_t ms) {
 void GPIOx_init (void) {
     GPIO_InitTypeDef GPIO_InitStructure = {0};
 
-    RCC->APB2PCENR |= RCC_APB2Periph_GPIOA;
+    RCC->APB2PCENR |= RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOC;
     // RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init (GPIOA, &GPIO_InitStructure);
+    /*
+    GPIO_InitStructure.GPIO_Pin = BLE_STAT_PIN;//GPIO_Pin_4;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init (GPIOC, &GPIO_InitStructure);
+    //
+    GPIO_WriteBit (GPIOA, GPIO_Pin_5, Bit_SET);
+    */
 #ifdef SET_RF_433
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
@@ -441,9 +453,14 @@ void help()
 		   "SPI2 (ST7789):\n\tSCLK - PB13\n\tMOSI - PB15\n\tRES - PB11\n\tDC - PB10\n\tCS - PB12\n\tBLK - PB9\n"
 		   "SPI1 (FM25V40):\n\tNSS - PA4\n\tSCLK - PA5\n\tMISO - PA6\n\tMOSI - PA7\n"
            "I2C1 (BMx280):\n\tSCL - PB8\n\tSDA - PB9\n"
-           "UART4 (JDY-23):\n\tTX - PC10\n\tRX - PC11\n"
+           #ifdef SET_JDY23
+                "UART4 (JDY-23):\n\tTX - PC10\n\tRX - PC11\n"
+           #else
+                "UART4 (JDY-31):\n\tTX - PC10\n\tRX - PC11\n"
+           #endif
 		   "WCH-LinkE:\n\tSWDIO - PA13\n\tSWCLK - PA14\n"
-		   "VCC:\n\tADC15 - PC5\n");
+		   "VCC:\n\tADC15 - PC5\n"
+           "STAT (IRQ_BLE):\n\tIRQ_PIN - PC4\n");
 }
 //--------------------------------------------------------------------
 /**/
@@ -636,6 +653,36 @@ void prnBuffer(uint32_t adr, const uint8_t *buf, uint32_t len, const int lsize)
 	}
 }
 //-----------------------------------------------------------------------------
+void toUppers(char *st)
+{
+    for (int i = 0; i < strlen(st); i++) *(st + i) = toupper(*(st + i));
+}
+//-----------------------------------------------------------------------------
+void EXTI4_INT_INIT(void)
+{
+    GPIO_InitTypeDef GPIO_InitStructure = {0};
+    EXTI_InitTypeDef EXTI_InitStructure = {0};
+    NVIC_InitTypeDef NVIC_InitStructure = {0};
 
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOC, ENABLE);
 
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+    GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+    /* GPIOC ----> EXTI_Line4 */
+    GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource4);
+    EXTI_InitStructure.EXTI_Line = EXTI_Line4;
+    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;//EXTI_Trigger_Falling;
+    EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+    EXTI_Init(&EXTI_InitStructure);
+
+    NVIC_InitStructure.NVIC_IRQChannel = EXTI4_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+}
+//--------------------------------------------------------------
 #endif

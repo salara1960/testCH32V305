@@ -52,6 +52,20 @@ void HardFault_Handler(void)
     Delay_MS(200);
   }
 }
+//
+#ifdef SET_BLE_STAT_PIN
+    void EXTI4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+    //
+    void EXTI4_IRQHandler(void)
+    {
+        if (en_irg) {
+            ble_ack_con = GPIO_ReadInputDataBit(GPIOC, BLE_STAT_PIN);// 1:rising-connect,0:falling-disconnect
+            //printf("PC4=%d\n", ble_ack_con);
+            putEvt(bleEvt, &que);
+        }
+        if (EXTI_GetITStatus(EXTI_Line4) != RESET) EXTI_ClearITPendingBit(EXTI_Line4); // Clear Flag
+    }
+#endif
 
 #ifdef SET_RTC_MODULE
 void RTC_IRQHandler(void)

@@ -7,13 +7,14 @@
 char RxAirBuf[AIR_BUF_SIZE] = {0};
 volatile uint16_t RxAirCnt = 0;
 int8_t airCmd = iNone;
-int8_t airAck = -1;
+uint8_t airAck = bleNone;
 bool airConnect = false;
 uint32_t tmr_pas = 0;
 bool yes_pas = false;
 
 const char *airPassword = "salara";
 
+#ifdef SET_JDY23
 const char *at_cmd[MAX_AT_CMD] = {
     "AT+HOSTEN\r\n",   // | +HOSTEN:<Param> , 0: transparent transmission from slave (APP, applet)
                                             //3: Slave (iBeacon) mode
@@ -51,6 +52,29 @@ const char *at_ack[MAX_AT_ACK] = {
     "+MAC:"       // +MAC:<Param>
     "+STAT:"      // +STAT:<Param> :  00: indicates not connected , 01: indicates connected
 };
+#else
+const char *at_cmd[MAX_AT_CMD] = { 
+    "AT+VERSION\r\n",  // | +VER:JDY-23-V1.2
+    "AT+BAUD8\r\n",    // | +OK ; //AT+BAUD<Param> : 4-9600,5-19200,6-38400,7-57600,8-115200,9-128000
+    "AT+LADDR\r\n",    // | +LADDR=<Param> (MAC address string)
+    "AT+RESET\r\n",    // | +OK
+    "AT+DISC\r\n",     // | +OK"
+    "AT+DEFAULT\r\n",  //   reset 
+    "AT+PIN\r\n",      // | +PIN=<Param> Default PIN: 1234
+    "AT+NAME<name>\r\n",//| OK 
+};
+const char *at_ack[MAX_AT_ACK] = {
+    "+OK",
+    "OK",                                     // OK
+    "+VERSION=JDY-31-V1.35,Bluetooth V3.0",  // +VERSION=<version>
+    "+CONNECTED",
+    "+DISCONNECT",
+    "+NAME=JDY-31-SPP",    // +NAME=<name>
+    "+BAUD=8",             // +BAUD=<Param> | 4-9600,5-19200,6-38400,7-57600,8-115200,9-128000
+    "+LADDR=18517F7D07D1"  // +LADDR:<mac_addr>
+};
+#endif
+
 
 void airAckParse(char *uk);
 void airDisconnect();
@@ -150,6 +174,7 @@ void airWrite(int8_t cd, char *str, bool prn)
 //-----------------------------------------------------------------------------------------
 void airAckParse(char *uk)
 {
+/*
 	if (strstr(uk, at_ack[ackCON])) {
 		airAck = ackCON;
         airConnect = true;
@@ -165,6 +190,18 @@ void airAckParse(char *uk)
             yes_pas = true;
         }
     } else airAck = -1;
+*/
+    if (strstr(uk, at_ack[ackOk])) {
+        airAck = ackOk;
+        if (airCmd == iRST) tmr_enIrg = getMS(1500);//putEvt(enIrgEvt, &que);
+    } else {
+        if (strstr(uk, airPassword)) {
+            if (airConnect) {
+                tmr_pas = 0;
+                yes_pas = true;
+            }
+        } else airAck = bleNone;
+    }
 }
 //-----------------------------------------------------------------------------------------
 void airDisconnect()
