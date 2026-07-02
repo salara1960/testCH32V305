@@ -19,7 +19,8 @@
 //const char *ver = "ver.1.8 15.06.26";
 //const char *ver = "ver.1.9 15.06.26";
 //const char *ver = "ver.2.0 16.06.26";
-const char *ver = "ver.2.1 26.06.26";
+//const char *ver = "ver.2.1 26.06.26";
+const char *ver = "ver.2.2 02.07.26";
 
 
 const char *eol = "\n";
@@ -33,7 +34,8 @@ volatile uint8_t again_flag = 0;
 s_recq_t que;
 bool queFlag = false;
 evt_t evt = noneEvt;
-volatile uint32_t epoch = 1782484999;//1782480780;//1781602230;//1781546399;//1781515199;
+volatile uint32_t epoch = 1783017699;//1783010051;
+//1782484999;//1782480780;//1781602230;//1781546399;//1781515199;
 //1781452255;//1781252806;//1781168930;//1780325733;//1780227269;//1780147283; 
 //1779952999;//1779740360;// 1779618399;//1779540639;//1778309280;//1767443364;
 uint32_t TZ = 2 * 60 * 60;
@@ -260,7 +262,29 @@ void Delay_MS (uint32_t ms) {
     uint32_t val = ms + get_MS();
     while (val > get_MS());
 }
+//--------------------------------------------------------------------
+void Report(const uint8_t addTime, const char *fmt, ...)
+{
+size_t len = MAX_UART_BUF << 1;
+int dl = 0;
 
+    char *buf = (char *)calloc(1, len);
+    if (!buf) return;
+
+	if (addTime) {
+        calcTime(0, buf);
+        strcat(buf, " | ");
+        dl = strlen(buf);
+    }
+
+	va_list args;
+	va_start(args, fmt);
+	vsnprintf(buf + dl, len - dl, fmt, args);
+	len = strlen(buf);
+	printf("%s", buf);
+    free(buf);	
+	va_end(args);
+}
 //--------------------------------------------------------------------
 void GPIOx_init (void) {
     GPIO_InitTypeDef GPIO_InitStructure = {0};
@@ -386,7 +410,7 @@ const char *ChipName (u32 cid) {
 }
 //--------------------------------------------------------------------
 void prn_msg (u32 tm) {
-    char tmp[32] = {0};
+    //char tmp[32] = {0};
     char md[64] = {0};
     char tp[80] = {0};
 
@@ -422,8 +446,8 @@ void prn_msg (u32 tm) {
         }
     }
 #ifdef SET_RTC_USE
-    printf ("%s | %s, RISC-V \e[0;91m%s\x1B[0m, SystemClk %d MHz, LCD \e[0;93mST7789\x1B[0m (SPI2)%s%s%s%s\r\n",
-            calcTime (tm, tmp),
+    Report(1, "%s, RISC-V \e[0;91m%s\x1B[0m, SystemClk %d MHz, LCD \e[0;93mST7789\x1B[0m (SPI2)%s%s%s%s\r\n",
+            //calcTime (tm, tmp),
             ver,
             // snum,
             ChipName (cid),
@@ -435,8 +459,8 @@ void prn_msg (u32 tm) {
             tp,
             md);
 #else
-    printf ("%s | %s, RISC-V \e[0;91m%s\x1B[0m, SystemClk %d MHz, LCD ST7789 (SPI2)%s%s%s\r\n",
-            calcTime (tm, tmp),
+    Report(1, "%s, RISC-V \e[0;91m%s\x1B[0m, SystemClk %d MHz, LCD ST7789 (SPI2)%s%s%s\r\n",
+            //calcTime (tm, tmp),
             ver,
             // snum,
             ChipName (cid),
@@ -449,18 +473,26 @@ void prn_msg (u32 tm) {
 //--------------------------------------------------------------------
 void help()
 {
-	printf("USART1 (debug):\n\tTX - PA9\n\tRX - PA10\n"
-		   "SPI2 (ST7789):\n\tSCLK - PB13\n\tMOSI - PB15\n\tRES - PB11\n\tDC - PB10\n\tCS - PB12\n\tBLK - PB9\n"
-		   "SPI1 (FM25V40):\n\tNSS - PA4\n\tSCLK - PA5\n\tMISO - PA6\n\tMOSI - PA7\n"
-           "I2C1 (BMx280):\n\tSCL - PB8\n\tSDA - PB9\n"
-           #ifdef SET_JDY23
-                "UART4 (JDY-23):\n\tTX - PC10\n\tRX - PC11\n"
-           #else
-                "UART4 (JDY-31):\n\tTX - PC10\n\tRX - PC11\n"
-           #endif
-		   "WCH-LinkE:\n\tSWDIO - PA13\n\tSWCLK - PA14\n"
-		   "VCC:\n\tADC15 - PC5\n"
-           "STAT (IRQ_BLE):\n\tIRQ_PIN - PC4\n");
+	Report(0, "USART1 (debug):\n\tTX-PA9\n\tRX-PA10\n"
+		    "SPI2 (ST7789):\n\tSCLK-PB13\n\tMOSI-PB15\n\tRES-PB11\n\tDC-PB10\n\tCS-PB12\n\tBLK-PB9\n"
+		    "SPI1 (FM25V40):\n\tNSS-PA4\n\tSCLK-PA5\n\tMISO-PA6\n\tMOSI-PA7\n"
+            "I2C1 (BMx280):\n\tSCL-PB8\n\tSDA-PB9\n"
+            #ifdef SET_AIR_MODULE
+                #ifdef SET_JDY23
+                    "UART4 (JDY-23):\n\tTX-PC10\n\tRX-PC11\n"
+                #else
+                    "UART4 (JDY-31):\n\tTX-PC10\n\tRX-PC11\n"
+                #endif
+            #endif
+            #ifdef SET_SDCARD
+                "SDIO (SDCARD):\n\tD0-PC8\n\tD1-PC9\n\tD2-PC10\n\tD3-PC11\n\tSCK-PC12\n\tCMD-PD2\n"    
+            #endif
+		    "WCH-LinkE:\n\tSWDIO-PA13\n\tSWCLK-PA14\n"
+		    "VCC:\n\tADC15-PC5\n"
+            #ifdef SET_AIR_MODULE
+                "STAT (IRQ_BLE):\n\tIRQ_PIN-PC4\n"
+            #endif
+           );
 }
 //--------------------------------------------------------------------
 /**/

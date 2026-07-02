@@ -125,7 +125,7 @@
 						"preprocess_only": false,
 						"defined_symbols": [
 							"SET_FMRAM",
-							"SET_AIR_MODULE"
+							"SET_SDCARD"
 						],
 						"undefined_symbols": [
 							"SET_BIG_PIC"

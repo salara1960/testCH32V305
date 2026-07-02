@@ -55,6 +55,11 @@
 	#include "air.h"
 #endif
 
+#ifdef SET_SDCARD
+	#include "sdio.h"
+#endif
+
+#define MAX_UART_BUF 1024
 
 #define HTONS(x) ((uint16_t)((x >> 8) | ((x << 8) & 0xff00)))
 #define LOOP_FOREVER() while(1) { Delay_Ms(1); }
@@ -79,5 +84,6 @@ enum {
 	bleEvt,
 	errEvt,
 };
+
 
 #endif /* USER_HDR_H_ */

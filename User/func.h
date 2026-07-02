@@ -97,6 +97,7 @@ char *calcTime(uint32_t sec, char *st);
 void Delay_MS(uint32_t ms);
 uint32_t getMS(uint32_t ms);
 int checkMS(uint32_t ms);
+void Report(const uint8_t addTime, const char *fmt, ...);
 void GPIOx_init(void);
 void TIM1_Init(void);
 const char *ChipName(u32 cid);

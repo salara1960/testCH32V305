@@ -14,6 +14,7 @@ C_SRCS += \
 ../User/lcd.c \
 ../User/main.c \
 ../User/rtc.c \
+../User/sdio.c \
 ../User/system_ch32v30x.c 
 
 C_DEPS += \
@@ -26,6 +27,7 @@ C_DEPS += \
 ./User/lcd.d \
 ./User/main.d \
 ./User/rtc.d \
+./User/sdio.d \
 ./User/system_ch32v30x.d 
 
 OBJS += \
@@ -38,6 +40,7 @@ OBJS += \
 ./User/lcd.o \
 ./User/main.o \
 ./User/rtc.o \
+./User/sdio.o \
 ./User/system_ch32v30x.o 
 
 DIR_OBJS += \
@@ -52,5 +55,5 @@ DIR_EXPANDS += \
 
 # Each subdirectory must supply rules for building sources it contributes
 User/%.o: ../User/%.c
-	@	riscv-wch-elf-gcc -march=rv32imafcxw -msmall-data-limit=8 -msave-restore -fmax-errors=20 -Os -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -fsingle-precision-constant -Wunused -Wuninitialized -g -DSET_FMRAM -DSET_AIR_MODULE -USET_BIG_PIC -I"/home/alarm/mounriver-studio-projects/testCH32V305/Debug" -I"/home/alarm/mounriver-studio-projects/testCH32V305/Core" -I"/home/alarm/mounriver-studio-projects/testCH32V305/User" -I"/home/alarm/mounriver-studio-projects/testCH32V305/Peripheral/inc" -std=gnu99 -v -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "$@" "$<"
+	@	riscv-wch-elf-gcc -march=rv32imafcxw -msmall-data-limit=8 -msave-restore -fmax-errors=20 -Os -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -fsingle-precision-constant -Wunused -Wuninitialized -g -DSET_FMRAM -DSET_SDCARD -USET_BIG_PIC -I"/home/alarm/mounriver-studio-projects/testCH32V305/Debug" -I"/home/alarm/mounriver-studio-projects/testCH32V305/Core" -I"/home/alarm/mounriver-studio-projects/testCH32V305/User" -I"/home/alarm/mounriver-studio-projects/testCH32V305/Peripheral/inc" -std=gnu99 -v -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -c -o "$@" "$<"
 

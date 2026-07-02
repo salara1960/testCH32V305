@@ -29,7 +29,7 @@ User/lcd.o: ../User/lcd.c \
  /home/alarm/mounriver-studio-projects/testCH32V305/User/ch32v30x_it.h \
  /home/alarm/mounriver-studio-projects/testCH32V305/Peripheral/inc/ch32v30x_misc.h \
  ../User/lcd.h ../User/fonts.h ../User/func.h ../User/hdr.h ../User/rtc.h \
- ../User/i2c.h ../User/fmram.h ../User/air.h
+ ../User/i2c.h ../User/fmram.h ../User/sdio.h
 /home/alarm/mounriver-studio-projects/testCH32V305/Debug/debug.h:
 /home/alarm/mounriver-studio-projects/testCH32V305/Peripheral/inc/ch32v30x.h:
 /home/alarm/mounriver-studio-projects/testCH32V305/Core/core_riscv.h:
@@ -66,4 +66,4 @@ User/lcd.o: ../User/lcd.c \
 ../User/rtc.h:
 ../User/i2c.h:
 ../User/fmram.h:
-../User/air.h:
+../User/sdio.h:

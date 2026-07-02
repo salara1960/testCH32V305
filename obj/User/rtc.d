@@ -29,7 +29,7 @@ User/rtc.o: ../User/rtc.c ../User/rtc.h ../User/hdr.h \
  /home/alarm/mounriver-studio-projects/testCH32V305/User/ch32v30x_it.h \
  /home/alarm/mounriver-studio-projects/testCH32V305/Peripheral/inc/ch32v30x_misc.h \
  ../User/func.h ../User/lcd.h ../User/fonts.h ../User/i2c.h \
- ../User/fmram.h ../User/air.h
+ ../User/fmram.h ../User/sdio.h
 ../User/rtc.h:
 ../User/hdr.h:
 /home/alarm/mounriver-studio-projects/testCH32V305/Debug/debug.h:
@@ -66,4 +66,4 @@ User/rtc.o: ../User/rtc.c ../User/rtc.h ../User/hdr.h \
 ../User/fonts.h:
 ../User/i2c.h:
 ../User/fmram.h:
-../User/air.h:
+../User/sdio.h:
