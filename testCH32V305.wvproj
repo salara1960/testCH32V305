@@ -127,9 +127,9 @@
 						"do_not_search_system_directories": false,
 						"preprocess_only": false,
 						"defined_symbols": [
-							"SET_FMRAM",
 							"SET_AIR_MODULE",
-							"SET_SDCARD"
+							"SET_SDCARD",
+							"SET_FMRAM"
 						],
 						"undefined_symbols": [
 							"SET_BIG_PIC"

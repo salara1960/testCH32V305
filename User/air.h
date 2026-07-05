@@ -3,7 +3,7 @@
 
 #ifdef SET_AIR_MODULE
 
-//#define SET_JDY23
+#define SET_JDY23
 
 #include "func.h"
 

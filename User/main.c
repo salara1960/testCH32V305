@@ -118,7 +118,7 @@ int main (void) {
     Delay_MS (50);
     putPic (gImage_test, fm_adr, PIC_SIZE);
 #else
-    putEvt (picEvt, &que);
+    putEvt(picEvt, &que);
 #endif
     //
     crc_fm = get_crcFMRAM (fm_adr, PIC_SIZE);
