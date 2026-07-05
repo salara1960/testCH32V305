@@ -1,5 +1,5 @@
 ################################################################################
-# MRS Version: 2.4.0
+# MRS Version: 2.5.0
 # Automatically-generated file. Do not edit!
 ################################################################################
 -include ../makefile.init
@@ -54,7 +54,7 @@ post-build:
 
 # Tool invocations
 testCH32V305.elf: $(OBJS) $(USER_OBJS_ESCAPE)
-	@	riscv-wch-elf-gcc -march=rv32imafcxw -msmall-data-limit=8 -msave-restore -fmax-errors=20 -Os -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -fsingle-precision-constant -Wunused -Wuninitialized -g -T "/home/alarm/mounriver-studio-projects/testCH32V305/Ld/Link.ld" -nostartfiles -Xlinker --gc-sections -Wl,-Map,"testCH32V305.map" --specs=nano.specs --specs=nosys.specs -v -o "testCH32V305.elf" $(OBJS) $(LIBS)
+	@	riscv-wch-elf-gcc -march=rv32imafc_xw -msmall-data-limit=8 -msave-restore -fmax-errors=20 -Os -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -fsingle-precision-constant -Wunused -Wuninitialized -g -T "/home/alarm/mounriver-studio-projects/testCH32V305/Ld/Link.ld" -nostartfiles -Xlinker --gc-sections -Wl,-Map,"testCH32V305.map" --specs=nano.specs --specs=nosys.specs -v -o "testCH32V305.elf" $(OBJS) $(LIBS)
 testCH32V305.bin: testCH32V305.elf
 	@	riscv-wch-elf-objcopy -O binary "testCH32V305.elf" "testCH32V305.bin"
 testCH32V305.hex: testCH32V305.elf

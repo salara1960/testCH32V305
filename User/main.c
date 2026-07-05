@@ -15,6 +15,7 @@
  USART Print debugging routine:
  USART1_Tx(PA9).
  USART1_Rx(PA10 with interrupt)
+ //
 */
 
 #include "func.h"
@@ -139,8 +140,8 @@ int main (void) {
 #endif
 
 #ifdef SET_AIR_MODULE
-    UART4_Cfg (115200);
-    uint32_t air_rst = getMS (2000);
+    blePort_Cfg(115200);
+    uint32_t air_rst = getMS(1500);
 #endif
 
 #ifdef SET_SDCARD
@@ -149,14 +150,14 @@ int main (void) {
     SD_Error errorstatus = SD_Init();
     if (errorstatus != SD_OK) {
         tmr_sdinit = getMS (5000);
-        Report(1, "Init SDCARD Error '%s'(%d)\n",
-				(errorstatus <= 33) ? errSD[errorstatus] : "Unknown",
-				errorstatus);
+        Report (1, "Init SDCARD Error '%s'(%d)\n",
+                (errorstatus <= 33) ? errSD[errorstatus] : "Unknown",
+                errorstatus);
     } else {
-        Report(1, "Init SDCARD Ok\n");
+        Report (1, "Init SDCARD Ok\n");
         show_sdcard_info();
         Sector_Nums = ((u32)(SDCardInfo.CardCapacity >> 20)) >> 1;
-        Report(1, "Sector_Nums:0x%08x\n", Sector_Nums);
+        Report (1, "Sector_Nums:0x%08x\n", Sector_Nums);
     }
 #endif
 
@@ -203,13 +204,13 @@ int main (void) {
                 tmr_sdinit = 0;
                 errorstatus = SD_Init();
                 if (errorstatus != SD_OK) {
-                    tmr_sdinit = getMS (5000);
-                    Report(1, "Init SDCARD Error '%s'(%d)\n", (errorstatus <= 33) ? errSD[errorstatus] : "Unknown", errorstatus);
+                    tmr_sdinit = getMS (10000);
+                    Report (1, "Init SDCARD Error '%s'(%d)\n", (errorstatus <= 33) ? errSD[errorstatus] : "Unknown", errorstatus);
                 } else {
-                    Report(1, "Init SDCARD Ok\n");
+                    Report (1, "Init SDCARD Ok\n");
                     show_sdcard_info();
                     Sector_Nums = ((u32)(SDCardInfo.CardCapacity >> 20)) >> 1;
-                    Report(1, "Sector_Nums:0x%08x\n", Sector_Nums);
+                    Report (1, "Sector_Nums:0x%08x\n", Sector_Nums);
                 }
             }
         }
@@ -292,7 +293,7 @@ int main (void) {
 #ifdef SET_AIR_MODULE
             else if ((uk = strstr ((char *)getBuffer, "air="))) {
                 uk += 4;
-                toUppers (uk);  //(char *)(getBuffer + 4));
+                toUppers(uk);  //(char *)(getBuffer + 4));
                 putAirBuf (uk, strlen (uk));
             } else if (strstr ((char *)getBuffer, "stat")) {
                 printf ("BLE status is '%s'\n", (ble_ack_con == 1) ? "connected" : "disconnected");
@@ -319,10 +320,10 @@ int main (void) {
             if (crc_calc) {
                 crc_calc = false;
                 uint32_t crc = get_crcFMRAM (fm_adr, fm_len);
-                Report(1, "CRC: FMRAM[0x%X..0x%X]=0x%04X%s\n", fm_adr, fm_adr + fm_len - 1, crc, stz);
+                Report (1, "CRC: FMRAM[0x%X..0x%X]=0x%04X%s\n", fm_adr, fm_adr + fm_len - 1, crc, stz);
             } else {
                 crc_fm = get_crcFMRAM (fm_adr, PIC_SIZE);
-                Report(1, "CRC: PIC_FMRAM=0x%04X%s\n", crc_fm, stz);
+                Report (1, "CRC: PIC_FMRAM=0x%04X%s\n", crc_fm, stz);
             }
 #endif
         } break;
@@ -365,7 +366,7 @@ int main (void) {
         {
             uint8_t *rd_page = (uint8_t *)calloc (1, fm_len);
             if (rd_page) {
-                Report(0,"Read: addr=%u len=%u\n", fm_adr, fm_len);
+                Report (0, "Read: addr=%u len=%u\n", fm_adr, fm_len);
                 SPI_Flash_Read (rd_page, fm_adr, fm_len);
                 prnBuffer (fm_adr, rd_page, fm_len, 32);
             }
@@ -377,7 +378,7 @@ int main (void) {
         {
             uint8_t *wr_page = (uint8_t *)calloc (1, fm_len);
             if (wr_page) {
-                Report(0, "Write: addr=%u len=%u val=%d\n", fm_adr, fm_len, fm_val);
+                Report (0, "Write: addr=%u len=%u val=%d\n", fm_adr, fm_len, fm_val);
                 if (fm_val == -1)
                     for (uint16_t i = 0; i < fm_len; i++) wr_page[i] = (uint8_t)i;
                 else
@@ -520,6 +521,6 @@ int main (void) {
     }
 
     GPIO_WriteBit (GPIOA, GPIO_Pin_3, Bit_RESET);
-    Report(1, "!!! Error init queue !!!\r\n");
+    Report (1, "!!! Error init queue !!!\r\n");
     LOOP_FOREVER();
 }

@@ -8,9 +8,9 @@
 			"cwd": "/home/alarm/mounriver-studio-projects/testCH32V305",
 			"openOCDCfg": {
 				"useLocalOpenOCD": true,
-				"executable": "/home/alarm/Downloads/RISC-V/MRS230/MRS-linux-x64/resources/app/resources/linux/components/WCH/OpenOCD/OpenOCD/bin/openocd",
+				"executable": "/home/alarm/Downloads/RISC-V/MRS250/MRS-linux-x64/resources/app/resources/linux/components/WCH/OpenOCD/OpenOCD/bin/openocd",
 				"configOptions": [
-					"-f \"/home/alarm/Downloads/RISC-V/MRS230/MRS-linux-x64/resources/app/resources/linux/components/WCH/OpenOCD/OpenOCD/bin/wch-riscv.cfg\" -c \"chip_id CH32V30x\""
+					"-f \"/home/alarm/Downloads/RISC-V/MRS250/MRS-linux-x64/resources/app/resources/linux/components/WCH/OpenOCD/OpenOCD/bin/wch-riscv.cfg\" -c \"chip_id CH32V30x\""
 				],
 				"gdbport": 3333,
 				"telnetport": 4444,
@@ -22,7 +22,7 @@
 				"enableNoZeroWaitingAreaFlash": false
 			},
 			"gdbCfg": {
-				"executable": "/home/alarm/Downloads/RISC-V/MRS230/MRS-linux-x64/resources/app/resources/linux/components/WCH/Toolchain/RISC-V Embedded GCC12/bin/riscv-wch-elf-gdb",
+				"executable": "/home/alarm/Downloads/RISC-V/MRS250/MRS-linux-x64/resources/app/resources/linux/components/WCH/Toolchain/RISC-V Embedded GCC12/bin/riscv-wch-elf-gdb",
 				"commands": [
 					"set mem inaccessible-by-default off",
 					"set architecture riscv:rv32",
@@ -54,7 +54,7 @@
 				},
 				"debugInRAM": false
 			},
-			"svdpath": "/home/alarm/Downloads/RISC-V/MRS230/MRS-linux-x64/resources/app/resources/linux/components/WCH/SDK/default/RISC-V/CH32V305/NoneOS/CH32V305xx.svd",
+			"svdpath": "/home/alarm/Downloads/RISC-V/MRS250/MRS-linux-x64/resources/app/resources/linux/components/WCH/SDK/default/RISC-V/CH32V305/NoneOS/CH32V305xx.svd",
 			"output": {
 				"showDebugGDBTrace": true,
 				"saveDebugOutputToFile": false,

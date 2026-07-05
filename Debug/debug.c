@@ -260,7 +260,7 @@ __attribute__ ((used)) int _write (int fd, char *buf, int size) {
 #else
     for (i = 0; i < size; i++) {
 #if (DEBUG == DEBUG_UART1)
-        while (USART_GetFlagStatus (portLog, USART_FLAG_TC) == RESET);
+        while (USART_GetFlagStatus(portLog, USART_FLAG_TC) == RESET);
         USART_SendData (portLog, *buf++);
 #elif (DEBUG == DEBUG_UART2)
         while (USART_GetFlagStatus (portLog, USART_FLAG_TC) == RESET);

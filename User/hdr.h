@@ -33,8 +33,10 @@
 //#define SET_BIG_PIC //<- move to compile command 
 #ifdef SET_FMRAM
 	#define START_PIC_ADDR 16
-	#define PIC_IN_FMRAM
+	#define PIC_IN_FMRAM 
 #endif
+//#define SET_AIR_MODULE <- move to compile command
+//#define SET_SDCARD <- move to compile command
 
 #ifdef SET_RTC_USE
 	extern volatile uint32_t epoch;

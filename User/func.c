@@ -20,7 +20,9 @@
 //const char *ver = "ver.1.9 15.06.26";
 //const char *ver = "ver.2.0 16.06.26";
 //const char *ver = "ver.2.1 26.06.26";
-const char *ver = "ver.2.2 02.07.26";
+//const char *ver = "ver.2.2 02.07.26";
+//const char *ver = "ver.2.3 03.07.26";
+const char *ver = "ver.2.4 05.07.26";
 
 
 const char *eol = "\n";
@@ -34,7 +36,7 @@ volatile uint8_t again_flag = 0;
 s_recq_t que;
 bool queFlag = false;
 evt_t evt = noneEvt;
-volatile uint32_t epoch = 1783017699;//1783010051;
+volatile uint32_t epoch = 1783243999;//1783075075;//1783017699;//1783010051;
 //1782484999;//1782480780;//1781602230;//1781546399;//1781515199;
 //1781452255;//1781252806;//1781168930;//1780325733;//1780227269;//1780147283; 
 //1779952999;//1779740360;// 1779618399;//1779540639;//1778309280;//1767443364;
@@ -279,10 +281,10 @@ int dl = 0;
 
 	va_list args;
 	va_start(args, fmt);
-	vsnprintf(buf + dl, len - dl, fmt, args);
-	len = strlen(buf);
-	printf("%s", buf);
-    free(buf);	
+	    vsnprintf(buf + dl, len - dl, fmt, args);
+	    len = strlen(buf);
+	    printf("%s", buf);
+        free(buf);	
 	va_end(args);
 }
 //--------------------------------------------------------------------
@@ -479,9 +481,9 @@ void help()
             "I2C1 (BMx280):\n\tSCL-PB8\n\tSDA-PB9\n"
             #ifdef SET_AIR_MODULE
                 #ifdef SET_JDY23
-                    "UART4 (JDY-23):\n\tTX-PC10\n\tRX-PC11\n"
+                    "USART2 (JDY-23):\n\tTX-PA2\n\tRX-PA3\n"
                 #else
-                    "UART4 (JDY-31):\n\tTX-PC10\n\tRX-PC11\n"
+                    "USART2 (JDY-31):\n\tTX-PA2\n\tRX-PA3\n"
                 #endif
             #endif
             #ifdef SET_SDCARD

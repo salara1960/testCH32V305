@@ -50,15 +50,12 @@ void SDIO_DeInit(void)
     SDIO->MASK = 0x00000000;
 }
 
-/*********************************************************************
+/*
  * @fn      SDIO_Init
- *
  * @brief   Initializes the SDIO peripheral according to the specified
  *        parameters in the SDIO_InitStruct.
- *
  * @param   SDIO_InitStruct - pointer to a SDIO_InitTypeDef structure
  *        that contains the configuration information for the SDIO peripheral.
- *
  * @return  None
  */
 void SDIO_Init(SDIO_InitTypeDef *SDIO_InitStruct)

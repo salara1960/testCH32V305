@@ -14,6 +14,8 @@ bool yes_pas = false;
 
 const char *airPassword = "salara";
 
+USART_TypeDef *blePort = USART2;
+
 #ifdef SET_JDY23
 const char *at_cmd[MAX_AT_CMD] = {
     "AT+HOSTEN\r\n",   // | +HOSTEN:<Param> , 0: transparent transmission from slave (APP, applet)
@@ -78,48 +80,12 @@ const char *at_ack[MAX_AT_ACK] = {
 
 void airAckParse(char *uk);
 void airDisconnect();
-void UART4_IRQHandler (void) __attribute__ ((interrupt ("WCH-Interrupt-fast")));
-
-void UART4_Cfg (uint32_t spd) {
-    GPIO_InitTypeDef GPIO_InitStructure = {0};
-    USART_InitTypeDef USART_InitStructure = {0};
-    NVIC_InitTypeDef NVIC_InitStructure = {0};
-
-    RCC_APB1PeriphClockCmd (RCC_APB1Periph_UART4, ENABLE);
-    RCC_APB2PeriphClockCmd (RCC_APB2Periph_GPIOC, ENABLE);
-
-    /* UART4 TX-->PC.10   RX-->PC.11 */
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_Init (GPIOC, &GPIO_InitStructure);
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init (GPIOC, &GPIO_InitStructure);
-
-    USART_InitStructure.USART_BaudRate = spd;  // 115200;
-    USART_InitStructure.USART_WordLength = USART_WordLength_8b;
-    USART_InitStructure.USART_StopBits = USART_StopBits_1;
-    USART_InitStructure.USART_Parity = USART_Parity_No;
-    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-    USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
-
-    USART_Init (UART4, &USART_InitStructure);
-    USART_ITConfig (UART4, USART_IT_RXNE, ENABLE);
-
-    NVIC_InitStructure.NVIC_IRQChannel = UART4_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init (&NVIC_InitStructure);
-
-    USART_Cmd (UART4, ENABLE);
-}
-
+void USART2_IRQHandler (void) __attribute__ ((interrupt ("WCH-Interrupt-fast")));
 //
-void UART4_IRQHandler (void) {
-    if (USART_GetITStatus (UART4, USART_IT_RXNE) != RESET) {
-        u8 byte = USART_ReceiveData (UART4);
+void USART2_IRQHandler (void)
+{
+    if (USART_GetITStatus(blePort, USART_IT_RXNE) != RESET) {
+        u8 byte = USART_ReceiveData(blePort);
         RxAirBuf[RxAirCnt++] = byte;
         if (RxAirCnt == AIR_BUF_SIZE)
             RxAirCnt = 0;
@@ -132,6 +98,46 @@ void UART4_IRQHandler (void) {
     }
 }
 //
+void blePort_Cfg(uint32_t spd)
+{
+GPIO_InitTypeDef GPIO_InitStructure = {0};
+USART_InitTypeDef USART_InitStructure = {0};
+NVIC_InitTypeDef NVIC_InitStructure = {0};
+
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_AFIO, ENABLE);
+    //GPIO_PinRemapConfig(GPIO_FullRemap_USART5, ENABLE);
+
+
+    /* USART2 TX-->PA.2   RX-->PA.3 */
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    USART_InitStructure.USART_BaudRate = spd;  // 115200;
+    USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+    USART_InitStructure.USART_StopBits = USART_StopBits_1;
+    USART_InitStructure.USART_Parity = USART_Parity_No;
+    USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+    USART_InitStructure.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
+
+    USART_Init(blePort, &USART_InitStructure);
+    USART_ITConfig(blePort, USART_IT_RXNE, ENABLE);
+
+    NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+
+    USART_Cmd(blePort, ENABLE);
+}
+
+//
 void putAirBuf (char *buf, int len) {
     char *ukz = NULL;
 
@@ -141,34 +147,34 @@ void putAirBuf (char *buf, int len) {
         len++;
     }
     for (int i = 0; i < len; i++) {
-        while (USART_GetFlagStatus (UART4, USART_FLAG_TXE) == RESET);
-        USART_SendData (UART4, *buf++);
+        while (USART_GetFlagStatus(blePort, USART_FLAG_TXE) == RESET);
+        USART_SendData(blePort, *buf++);
     }
 }
 //
 void airWrite(int8_t cd, char *str, bool prn)
 {
+char *uks = at_cmd[cd];
+int len = strlen(at_cmd[cd]);
+
     if (!str) {
         if ((cd <= iNone) || (cd >= iLast)) return;
     }
-
-    char *uks = at_cmd[cd];
-    int len = strlen (at_cmd[cd]);
-    //air_ack_wait = 1;
-    //txDoneFlagAir = 0;
+    
     if (str) {
         uks = str;
         char *ukz = NULL;
-        if ((ukz = strchr (uks, '\n'))) {
+        if ((ukz = strchr(uks, '\n'))) {
             *ukz = '\0';
-            strcat (uks, "\r\n");
-            len = strlen (uks);
+            strcat(uks, "\r\n");
+            len = strlen(uks);
         }
     }
-    if (prn) printf("%s", uks);
+    if (prn) Report(0, "%s", uks);
     for (int i = 0; i < len; i++) {
-        while (USART_GetFlagStatus (UART4, USART_FLAG_TXE) == RESET);
-        USART_SendData (UART4, *uks++);
+        while (USART_GetFlagStatus(blePort, USART_FLAG_TXE) == RESET);
+        USART_SendData(blePort, *uks++);
+        //while (USART_GetFlagStatus(blePort, USART_FLAG_TXE) == RESET);
     }
 }
 //-----------------------------------------------------------------------------------------

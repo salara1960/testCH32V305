@@ -9,6 +9,7 @@
 
 #define AIR_BUF_SIZE 256
 
+
 #ifdef SET_JDY23
 	#define MAX_AT_CMD    17
 	#define MAX_AT_ACK    15
@@ -93,9 +94,9 @@ extern uint32_t tmr_pas;
 extern bool yes_pas;
 
 
-void UART4_Cfg(uint32_t spd);
+void blePort_Cfg(uint32_t spd);
 void putAirBuf(char *buf, int len);
-void airWrite (int8_t cd, char *str, bool prn);
+void airWrite(int8_t cd, char *str, bool prn);
 void airDisconnect();
 
 #endif
